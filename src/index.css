@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --main-color: #2d3748;
+  --accent-color: #4299e1;
+  --paper-color: #ffffff;
+  --text-color: #1a202c;
+  --light-gray: #edf2f7;
+}
+
 body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--light-gray);
+  color: var(--text-color);
   direction: rtl;
+}
+
+/* We can keep some custom animations that aren't easily done with Tailwind */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
