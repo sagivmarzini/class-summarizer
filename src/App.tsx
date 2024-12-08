@@ -58,7 +58,7 @@ function App() {
 
   return (
     <div className="grid h-screen p-4 place-items-center">
-      {!showNotebook && <UploadArea onUpload={processAudioFile} />}
+      {!showNotebook && !loading && <UploadArea onUpload={processAudioFile} />}
       {loading && <Processing stage={loadingStage} />}
       {showNotebook && <Notebook notebook={notebook} />}
     </div>
