@@ -1,10 +1,15 @@
+import React from "react";
 import { type NotebookType } from "../utils/types";
 
 interface Props {
   notebook: NotebookType | null;
 }
 
-export default function Notebook({ notebook }: Props) {
+/*
+ * Notebook component that displays Cornell notes format content
+ * Content is received directly from Claude API - a trusted source
+ */
+const Notebook: React.FC<Props> = React.memo(({ notebook }) => {
   return (
     <div
       className="w-full h-full bg-notebook-lines bg-[length:100%_30px] relative pt-[90px] pr-8 overflow-hidden rounded-lg shadow-2xl
@@ -31,4 +36,6 @@ export default function Notebook({ notebook }: Props) {
       </main>
     </div>
   );
-}
+});
+
+export default Notebook;

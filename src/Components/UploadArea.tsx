@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { Mic } from "lucide-react";
 
 interface Props {
   onUpload: (file: File) => void;
@@ -24,11 +25,12 @@ export default function UploadArea({ onUpload }: Props) {
         className="hidden"
       />
       <button
-        className="py-6 text-2xl text-white rounded-full px-28 font-regular bg-primary shadow-button3d shadow-sky-800 hover:shadow-none hover:translate-y-[8px] transition"
+        className="flex items-center gap-2 py-6 text-2xl text-white rounded-full px-24 font-regular bg-primary shadow-button3d shadow-sky-800 hover:shadow-none hover:translate-y-[8px] transition"
         onClick={() => {
           inputRef.current?.click();
         }}
       >
+        <Mic size={"28px"} />
         העלה הקלטה
       </button>
       <p className="w-[300px] text-center mt-6 text-textColor opacity-70 text-lg">

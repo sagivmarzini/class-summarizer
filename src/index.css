@@ -25,21 +25,11 @@
   font-style: normal;
 }
 
-:root {
-  --main-color: #2d3748;
-  --accent-color: #4299e1;
-  --paper-color: #ffffff;
-  --text-color: #1a202c;
-  --light-gray: #edf2f7;
-}
-
 body {
   /* font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; */
   font-family: "Rubik", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: var(--light-gray);
-  color: var(--text-color);
   direction: rtl;
 }
 
