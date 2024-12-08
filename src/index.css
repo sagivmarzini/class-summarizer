@@ -42,6 +42,14 @@ body {
   }
 }
 
+ul,
+ol {
+  line-height: 29px;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 /* We can keep some custom animations that aren't easily done with Tailwind */
 @keyframes spin {
   0% {
