@@ -178,13 +178,13 @@ export async function summarizeTranscriptionClaude(transcription: string) {
         You need to take all the content of the lesson and the material studied and write it in a length that will fill an entire page of a notebook (A4).
         You will use the Cornell Method to summarize the material into:
         - Title
-        - Notes
-        - Cues
+        - Notes - Expand in this part, main lecture notes go here
+        - Cues (Main Ideas, concepts, vocabulary, questions, study prompts, hints)
         - Summary
         Imagine that the page is divided into 2 thirds - the content (notes), on the side - the cues, and in the bottom quarter - the summary of the entire page.
         You will return content in Hebrew only. Use the following format and return your answer with JSON code only without any introduction or additional characters.
         If you add characters outside the JSON object, parsing will fail and the program will crash make sure the response is a valid JSON object that is ready to be parsed to a JSON object
-        If you see an obvious mistake in the transcript of a famous quote or similar, this is probably a result of bad transcription.
+        If you see an obvious mistake in the transcript of a famous quote, verse, name, etc., this is probably a result of bad transcription.
         Try to include the correct thing.
 
         Text format: HTML

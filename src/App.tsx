@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Notebook from "./Components/Notebook";
-import UploadArea from "./Components/UploadArea";
+import UploadScreen from "./Components/UploadScreen";
 import Processing from "./Components/Modules/Processing";
 import { NotebookType } from "./utils/types";
 import {
@@ -58,7 +58,9 @@ function App() {
 
   return (
     <div className="grid h-screen p-4 place-items-center">
-      {!showNotebook && !loading && <UploadArea onUpload={processAudioFile} />}
+      {!showNotebook && !loading && (
+        <UploadScreen onUpload={processAudioFile} />
+      )}
       {loading && <Processing stage={loadingStage} />}
       {showNotebook && <Notebook notebook={notebook} />}
     </div>

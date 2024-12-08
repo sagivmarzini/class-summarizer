@@ -6,7 +6,7 @@ export default {
       colors: {
         primary: "#3498DB",
         background: "#F5F5F5",
-        textColor: "2C3E50",
+        textColor: "#2C3E50",
       },
       fontFamily: {
         rubik: ["Rubik", "sans-serif"],
