@@ -1,5 +1,5 @@
-export type Notebook = {
-  date: Date;
+export type NotebookType = {
+  // date: string;
   title: string;
   notes: string;
   cues: string;

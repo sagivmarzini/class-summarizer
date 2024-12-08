@@ -4,12 +4,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        main: "var(--main-color)",
-        accent: "var(--accent-color)",
-        paper: "var(--paper-color)",
-        textColor: "var(--text-color)",
-        lightGray: "var(--light-gray)",
+        primary: "#3498DB",
+        background: "#F5F5F5",
+        textColor: "2C3E50",
       },
+      fontFamily: {
+        rubik: ["Rubik", "sans-serif"],
+        "gveret-levin": ["GveretLevin", "sans-serif"],
+        yarden: ["Yarden", "sans-serif"],
+      },
+      boxShadow: {
+        button3d: "0 8px",
+      },
+      backgroundImage: {
+        "notebook-lines": "linear-gradient(to bottom, white 29px, #00b0d7 1px)",
+      },
+
       animation: {
         "spin-custom": "spin 1s linear infinite",
         "slide-in": "slideIn 0.3s ease-out",

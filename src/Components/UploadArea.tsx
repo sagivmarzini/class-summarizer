@@ -15,23 +15,25 @@ export default function UploadArea({ onUpload }: Props) {
   }
 
   return (
-    <div
-      onClick={() => {
-        inputRef.current?.click();
-      }}
-      className="p-8 mb-6 text-center transition-all border-2 border-gray-200 border-dashed cursor-pointer rounded-xl hover:border-blue-500 hover:bg-blue-50"
-    >
+    <div className="flex flex-col items-center">
       <input
         ref={inputRef}
         type="file"
         accept="audio/*"
         onChange={handleFileChange}
-        className="hidden w-full"
+        className="hidden"
       />
-      <h3 className="mb-2 text-lg font-semibold text-gray-800">
-        העלה הקלטת שיעור
-      </h3>
-      <p className="text-gray-600">לחצו או גררו קובץ שמע לפה</p>
+      <button
+        className="py-6 text-2xl text-white rounded-full px-28 font-regular bg-primary shadow-button3d shadow-sky-800 hover:shadow-none hover:translate-y-[8px] transition"
+        onClick={() => {
+          inputRef.current?.click();
+        }}
+      >
+        העלה הקלטה
+      </button>
+      <p className="w-[300px] text-center mt-6 text-textColor opacity-70 text-lg">
+        העלה הקלטה של השיעור וקבל סיכום חכם שאפשר להעתיק למחברת
+      </p>
     </div>
   );
 }

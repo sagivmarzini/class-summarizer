@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "GveretLevin";
+  src: url("/fonts/GveretLevin.woff2") format("woff2"),
+    url("/fonts/GveretLevin.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Yarden";
+  src: url("/fonts/yarden-regular-alefalefalef.woff2") format("woff2"),
+    url("/fonts/yarden-regular-alefalefalef.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Yarden";
+  src: url("/fonts/yarden-bold-alefalefalef.woff2") format("woff2"),
+    url("/fonts/yarden-bold-alefalefalef.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
 :root {
   --main-color: #2d3748;
   --accent-color: #4299e1;
@@ -11,12 +34,22 @@
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; */
+  font-family: "Rubik", sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--light-gray);
   color: var(--text-color);
   direction: rtl;
+}
+
+@layer utilities {
+  ul {
+    @apply list-disc pr-5;
+  }
+  ol {
+    @apply list-decimal pr-5;
+  }
 }
 
 /* We can keep some custom animations that aren't easily done with Tailwind */
