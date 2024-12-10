@@ -2,6 +2,8 @@ import OpenAI, { toFile } from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { wavWorker } from "./wav-worker";
 
+const AUDIO_SLICE_AMOUNT = 5;
+
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 const openai = new OpenAI({
   apiKey,
@@ -34,18 +36,18 @@ export async function splitAudioFile(file: File): Promise<Blob[]> {
   const compressedBuffer = await compressAudioBuffer(audioBuffer);
 
   const durationInSeconds = compressedBuffer.duration;
-  const chunkDuration = durationInSeconds / 3;
+  const chunkDuration = durationInSeconds / AUDIO_SLICE_AMOUNT;
 
   console.log(
     "Compressed audio - Duration:",
-    durationInSeconds,
+    durationInSeconds/60,
     "Sample rate:",
     compressedBuffer.sampleRate
   );
 
   const chunks: Blob[] = [];
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < AUDIO_SLICE_AMOUNT; i++) {
     const startTime = i * chunkDuration;
     const endTime = Math.min((i + 1) * chunkDuration, durationInSeconds);
     const currentChunkDuration = endTime - startTime;
