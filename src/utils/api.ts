@@ -104,9 +104,9 @@ export async function transcribe(audioFile: File) {
       model: "whisper-1",
       language: "he",
       prompt:
-        "This transcript is mainly of a teacher from a class, in Israel, in Hebrew",
+        `This transcript is of a teacher from a class, in Israel, in Hebrew.
+        There will be Hebrew names, verses from bible and Gemarah, etc.`,
     });
-    console.log(transcription.text);
     return transcription.text;
   } catch (error) {
     console.error("Error during transcription:", error);

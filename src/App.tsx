@@ -26,8 +26,8 @@ function App() {
       const chunks = await splitAudioFile(file);
 
       // Process chunks in parallel
-      const transcriptionPromises = chunks.map((chunk) =>
-        transcribe(new File([chunk], "chunk.wav", { type: "audio/wav" }))
+      const transcriptionPromises = chunks.map((chunk, index) =>
+        transcribe(new File([chunk], `chunk${index+1}.wav`, { type: "audio/wav" }))
       );
 
       // Wait for all transcriptions to complete
@@ -35,6 +35,7 @@ function App() {
 
       // Combine transcriptions
       const transcription = transcriptionParts.join(" ");
+      console.log(transcription);
 
       setLoadingStage("summarizing");
       const summaryText = await summarizeTranscriptionClaude(transcription);
@@ -56,10 +57,33 @@ function App() {
     }
   }
 
+  async function processTextContent(content: string) {
+    try {
+      setLoading(true);
+      setLoadingStage("summarizing");
+      const summaryText = await summarizeTranscriptionClaude(content);
+
+      const parsedSummary: NotebookType = JSON.parse(summaryText);
+      setNotebook({
+        title: parsedSummary.title,
+        notes: parsedSummary.notes,
+        cues: parsedSummary.cues,
+        summary: parsedSummary.summary,
+      });
+      setShowNotebook(true);
+    } catch (error) {
+      console.error("Error processing text content:", error);
+      setLoading(false);
+      alert("Failed to process text content. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="grid h-screen p-4 place-items-center">
       {!showNotebook && !loading && (
-        <UploadScreen onUpload={processAudioFile} />
+        <UploadScreen onUpload={processAudioFile} onUploadText={processTextContent} />
       )}
       {loading && <Processing stage={loadingStage} />}
       {showNotebook && <Notebook notebook={notebook} />}

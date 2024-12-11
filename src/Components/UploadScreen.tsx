@@ -1,11 +1,13 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Mic } from "lucide-react";
 
 interface Props {
   onUpload: (file: File) => void;
+  onUploadText: (text: string) => void;
 }
 
-export default function UploadScreen({ onUpload }: Props) {
+export default function UploadScreen({ onUpload, onUploadText }: Props) {
+  const [textValue, setTextValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -43,6 +45,18 @@ export default function UploadScreen({ onUpload }: Props) {
         <p className="w-[300px] text-center mt-6 text-textColor opacity-70 text-lg">
           העלה הקלטה של השיעור וקבל סיכום חכם שאפשר להעתיק למחברת
         </p>
+        <div className="flex flex-col items-center w-[90%]">
+          <textarea
+          value={textValue}
+          placeholder="או הדבק פה טקסט כדי לקבל סיכום חכם"
+          className="w-full mt-6 text-textColor opacity-70 text-lg border-2 border-textColor rounded-t-lg p-2"
+          onChange={(e) => {setTextValue(e.target.value)}}></textarea>
+          <button
+           onClick={() => {
+            onUploadText(textValue);
+           }}
+           className="bg-primary w-full p-2 rounded-b-lg text-white text-lg font-medium">שלח</button>
+        </div>
       </div>
     </div>
   );
