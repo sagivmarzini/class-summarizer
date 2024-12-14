@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
@@ -8,17 +7,21 @@ dotenv.config();
 
 const app = express();
 
-// Configure CORS to allow Vercel frontend
-const corsOptions = {
-  origin: '*', // For development, you might want to restrict this later
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400 // Cache preflight request for 24 hours
-};
+// CORS configuration
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://class-summarizer.vercel.app');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Max-Age', '86400'); // 24 hours
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
-app.use(cors(corsOptions));
-
-// Increase limit for large audio files
+// Increase payload size limits
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -34,21 +37,44 @@ const anthropic = new Anthropic({
 // Transcription endpoint
 app.post('/api/transcribe', async (req, res) => {
   try {
+    console.log('Received transcription request');
     const { audioData } = req.body;
-    const buffer = Buffer.from(audioData, 'base64');
-    const file = new File([buffer], 'audio.wav', { type: 'audio/wav' });
+    
+    if (!audioData) {
+      console.error('No audio data received');
+      return res.status(400).json({ error: 'No audio data provided' });
+    }
 
-    const transcription = await openai.audio.transcriptions.create({
-      file,
-      model: "whisper-1",
-      language: "he",
-      prompt: "This transcript is of a teacher from a class, in Israel, in Hebrew. There will be Hebrew names, verses from bible and Gemarah, etc.",
-    });
+    // Create a temporary file
+    const buffer = Buffer.from(audioData.split(',')[1], 'base64');
+    const tempFilePath = `/tmp/audio-${Date.now()}.webm`;
+    require('fs').writeFileSync(tempFilePath, buffer);
 
-    res.json({ text: transcription.text });
+    try {
+      const transcription = await openai.audio.transcriptions.create({
+        file: require('fs').createReadStream(tempFilePath),
+        model: 'whisper-1',
+        language: 'he'
+      });
+
+      // Clean up temp file
+      require('fs').unlinkSync(tempFilePath);
+
+      console.log('Transcription completed successfully');
+      res.json({ text: transcription.text });
+    } catch (error) {
+      console.error('OpenAI API error:', error);
+      res.status(500).json({ 
+        error: 'Failed to transcribe audio',
+        details: error.message 
+      });
+    }
   } catch (error) {
-    console.error('Transcription error:', error);
-    res.status(500).json({ error: 'Failed to transcribe audio' });
+    console.error('Server error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message 
+    });
   }
 });
 
