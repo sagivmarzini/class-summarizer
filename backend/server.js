@@ -7,8 +7,20 @@ import Anthropic from '@anthropic-ai/sdk';
 dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// Configure CORS to allow Vercel frontend
+const corsOptions = {
+  origin: '*', // For development, you might want to restrict this later
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400 // Cache preflight request for 24 hours
+};
+
+app.use(cors(corsOptions));
+
+// Increase limit for large audio files
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Initialize API clients
 const openai = new OpenAI({

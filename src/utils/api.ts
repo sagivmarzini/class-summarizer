@@ -99,15 +99,31 @@ async function splitAudioFile(file: File): Promise<Blob[]> {
 
 // Transcription functions
 async function transcribe(audioFile: File): Promise<string> {
-  const chunks = await splitAudioFile(audioFile);
-  let fullTranscription = '';
+  try {
+    const chunks = await splitAudioFile(audioFile);
+    let fullTranscription = '';
 
-  for (const chunk of chunks) {
-    const transcription = await transcribeAudio(chunk);
-    fullTranscription += transcription + ' ';
+    // Process chunks sequentially instead of in parallel
+    for (const chunk of chunks) {
+      try {
+        const transcription = await transcribeAudio(chunk);
+        fullTranscription += transcription + ' ';
+      } catch (error) {
+        console.error('Error transcribing chunk:', error);
+        // If a chunk fails, continue with the next one
+        continue;
+      }
+    }
+
+    if (!fullTranscription.trim()) {
+      throw new Error('Failed to transcribe any audio chunks');
+    }
+
+    return fullTranscription.trim();
+  } catch (error) {
+    console.error('Error in transcribe function:', error);
+    throw error;
   }
-
-  return fullTranscription.trim();
 }
 
 // Summarization functions
