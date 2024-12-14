@@ -174,31 +174,59 @@ export async function summarizeTranscriptionClaude(transcription: string) {
       {
         role: "user",
         content: `
-        Attached is a transcript of a lesson. Most of the transcript will be the words of the teacher speaking.
-        The transcript may have errors but you can understand what the teacher originally said.
-        You are a diligent and brilliant student who always uses the Cornell Method to summarize a lesson in a notebook.
-        You need to take all the content of the lesson and the material studied and write it in a length that will fill an entire page of a notebook (A4).
-        You will use the Cornell Method to summarize the material into:
-        - Title - a short an informative title that will wrap the entire subject in a few words.
-        - Notes - Expand in this part, main lecture notes go here. Include a mixture of whole paragraphs as well as relevant lists and points (if relevant)
-        - Cues - Main Ideas, concepts, vocabulary - with short meaning, questions, study prompts, side notes
-        - Summary
-        Imagine that the page is divided into 2 thirds - the content (notes), on the side - the cues, and in the bottom quarter - the summary of the entire page.
-        You will return content in Hebrew only. Use the following format and return your answer with JSON code only without any introduction or additional characters.
-        If you add characters outside the JSON object, parsing will fail and the program will crash make sure the response is a valid JSON object that is ready to be parsed to a JSON object
-        If you see an obvious mistake in the transcript of a famous quote, verse, name, etc., this is probably a result of bad transcriptio - write the correct option only.
+        You are a precise JSON generator and expert note-taker using the Cornell Method. Your task is to create a structured summary of a lecture transcript in Hebrew, formatted as a valid, parseable JSON object.
 
-        Text format: HTML
-        Use text formatting HTML tags to create bulleted lists, numbered lists, underline, line breaks, paragraphs, emphasis, italics, etc. (apart from title, leave as vanilla text)
+        OUTPUT CONSTRAINTS:
+        1. Return ONLY a single-line JSON object
+        2. NO text before or after the JSON object
+        3. ALL strings must be properly escaped
+        4. NO line breaks, tabs, or control characters in strings
+        5. ALL HTML tags must be properly closed
+        6. Use ONLY double quotes for JSON properties and values
 
-        Ensure no unescaped control characters like line breaks or tabs are present in the string.
-        Step 1: Remove unnecessary newlines in the strings.
-        Step 2: Ensure your JSON is a valid single-line string.
+        JSON STRUCTURE:
+        {
+          "title": "Brief descriptive title",
+          "notes": "Main content with HTML formatting",
+          "cues": "Key points with HTML formatting",
+          "summary": "Concise summary with HTML formatting"
+        }
 
-        IMPORTANT: Your response must be a valid JSON object with no line breaks or special characters in the strings. 
-        All property names must be in quotes.
-        Example format:
-        {"title": "value", "notes": "value", "cues": "value", "summary": "value"}
+        CONTENT GUIDELINES:
+        - Title: Concise, informative (plain text, no HTML)
+        - Notes (Main Section):
+          * Comprehensive lecture content
+          * Use <p>, <ul>, <li>, <strong>, <em> tags
+          * Convert bullet points to <ul><li> format
+          * Preserve Hebrew text direction
+        - Cues (Side Section):
+          * Key terms with definitions
+          * Study questions
+          * Important concepts
+          * Use HTML lists for organization
+        - Summary (Bottom Section):
+          * Concise overview
+          * Key takeaways
+          * Single paragraph with <p> tags
+
+        HEBREW LANGUAGE RULES:
+        - All content must be in Hebrew
+        - Correct any obvious transcription errors in quotes/verses
+        - Maintain proper Hebrew text direction
+        - Use correct Hebrew punctuation
+
+        HTML FORMATTING:
+        - Valid tags: <p>, <ul>, <li>, <ol>, <strong>, <em>, <br>
+        - All tags must be properly closed
+        - No attributes in HTML tags
+        - No nested lists
+        - No custom CSS or classes
+
+        Example structure (but in Hebrew):
+        {"title": "Topic Name", "notes": "<p>Main point</p><ul><li>Detail 1</li></ul>", "cues": "<ul><li>Key term: definition</li></ul>", "summary": "<p>Overview</p>"}
+
+        Process the following transcript according to these specifications, ensuring the output is a valid, parseable JSON string:
+        ${transcription}
             `,
       },
       {
