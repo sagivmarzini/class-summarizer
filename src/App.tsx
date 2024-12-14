@@ -9,74 +9,88 @@ import {
   transcribe,
 } from "./utils/api";
 
+interface ProcessingState {
+  loading: boolean;
+  loadingStage: "transcribing" | "summarizing";
+}
+
 function App() {
-  const [loading, setLoading] = useState(false);
-  const [loadingStage, setLoadingStage] = useState<
-    "transcribing" | "summarizing"
-  >("transcribing");
+  const [{ loading, loadingStage }, setProcessingState] = useState<ProcessingState>({
+    loading: false,
+    loadingStage: "transcribing",
+  });
   const [notebook, setNotebook] = useState<NotebookType | null>(null);
   const [showNotebook, setShowNotebook] = useState(false);
 
+  // Helper functions for state management
+  const startProcessing = (stage: "transcribing" | "summarizing") => {
+    setProcessingState({ loading: true, loadingStage: stage });
+  };
+
+  const stopProcessing = () => {
+    setProcessingState({ loading: false, loadingStage: "transcribing" });
+  };
+
+  const handleError = (error: unknown, errorMessage: string) => {
+    console.error(errorMessage, error);
+    stopProcessing();
+    alert(`${errorMessage} Please try again.`);
+  };
+
+  const updateNotebook = (parsedSummary: NotebookType) => {
+    setNotebook({
+      title: parsedSummary.title,
+      notes: parsedSummary.notes,
+      cues: parsedSummary.cues,
+      summary: parsedSummary.summary,
+    });
+    setShowNotebook(true);
+  };
+
+  // Core processing functions
+  async function transcribeAudioChunks(chunks: Blob[]): Promise<string> {
+    const transcriptionPromises = chunks.map((chunk, index) =>
+      transcribe(new File([chunk], `chunk${index + 1}.wav`, { type: "audio/wav" }))
+    );
+    const transcriptionParts = await Promise.all(transcriptionPromises);
+    return transcriptionParts.join(" ");
+  }
+
+  async function generateSummary(content: string): Promise<NotebookType> {
+    const summaryText = await summarizeTranscriptionClaude(content);
+    return JSON.parse(summaryText);
+  }
+
+  // Main processing functions
   async function processAudioFile(file: File) {
     try {
-      setLoading(true);
-      setLoadingStage("transcribing");
-
-      // Split audio into 3 chunks
+      startProcessing("transcribing");
+      
+      // Split and transcribe audio
       const chunks = await splitAudioFile(file);
+      const transcription = await transcribeAudioChunks(chunks);
+      console.log("Transcription completed:", transcription);
 
-      // Process chunks in parallel
-      const transcriptionPromises = chunks.map((chunk, index) =>
-        transcribe(new File([chunk], `chunk${index+1}.wav`, { type: "audio/wav" }))
-      );
-
-      // Wait for all transcriptions to complete
-      const transcriptionParts = await Promise.all(transcriptionPromises);
-
-      // Combine transcriptions
-      const transcription = transcriptionParts.join(" ");
-      console.log(transcription);
-
-      setLoadingStage("summarizing");
-      const summaryText = await summarizeTranscriptionClaude(transcription);
-
-      const parsedSummary: NotebookType = JSON.parse(summaryText);
-      setNotebook({
-        title: parsedSummary.title,
-        notes: parsedSummary.notes,
-        cues: parsedSummary.cues,
-        summary: parsedSummary.summary,
-      });
-      setShowNotebook(true);
+      // Generate summary
+      startProcessing("summarizing");
+      const parsedSummary = await generateSummary(transcription);
+      updateNotebook(parsedSummary);
     } catch (error) {
-      console.error("Error processing audio file:", error);
-      setLoading(false);
-      alert("Failed to process audio file. Please try again.");
+      handleError(error, "Failed to process audio file.");
     } finally {
-      setLoading(false);
+      stopProcessing();
     }
   }
 
   async function processTextContent(content: string) {
     try {
-      setLoading(true);
-      setLoadingStage("summarizing");
-      const summaryText = await summarizeTranscriptionClaude(content);
-
-      const parsedSummary: NotebookType = JSON.parse(summaryText);
-      setNotebook({
-        title: parsedSummary.title,
-        notes: parsedSummary.notes,
-        cues: parsedSummary.cues,
-        summary: parsedSummary.summary,
-      });
-      setShowNotebook(true);
+      startProcessing("summarizing");
+      const parsedSummary = await generateSummary(content);
+      updateNotebook(parsedSummary);
     } catch (error) {
-      console.error("Error processing text content:", error);
-      setLoading(false);
-      alert("Failed to process text content. Please try again.");
+      handleError(error, "Failed to process text content.");
     } finally {
-      setLoading(false);
+      stopProcessing();
     }
   }
 
