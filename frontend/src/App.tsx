@@ -27,7 +27,9 @@ function App() {
 
       // Process chunks in parallel
       const transcriptionPromises = chunks.map((chunk, index) =>
-        transcribe(new File([chunk], `chunk${index+1}.wav`, { type: "audio/wav" }))
+        transcribe(
+          new File([chunk], `chunk${index + 1}.wav`, { type: "audio/wav" })
+        )
       );
 
       // Wait for all transcriptions to complete
@@ -81,9 +83,12 @@ function App() {
   }
 
   return (
-    <div className="grid h-screen p-4 place-items-center">
+    <div className="grid place-items-center p-4 h-screen">
       {!showNotebook && !loading && (
-        <UploadScreen onUpload={processAudioFile} onUploadText={processTextContent} />
+        <UploadScreen
+          onUpload={processAudioFile}
+          onUploadText={processTextContent}
+        />
       )}
       {loading && <Processing stage={loadingStage} />}
       {showNotebook && <Notebook notebook={notebook} />}
