@@ -3,11 +3,7 @@ import Notebook from "./Components/Notebook";
 import UploadScreen from "./Components/UploadScreen";
 import Processing from "./Components/Modules/Processing";
 import { NotebookType } from "./utils/types";
-import {
-  splitAudioFile,
-  summarizeTranscriptionClaude,
-  transcribe,
-} from "./utils/api";
+import { summarize, transcribe } from "./utils/api";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -20,27 +16,16 @@ function App() {
   async function processAudioFile(file: File) {
     try {
       setLoading(true);
+
       setLoadingStage("transcribing");
-
-      // Split audio into 3 chunks
-      const chunks = await splitAudioFile(file);
-
-      // Process chunks in parallel
-      const transcriptionPromises = chunks.map((chunk, index) =>
-        transcribe(
-          new File([chunk], `chunk${index + 1}.wav`, { type: "audio/wav" })
-        )
-      );
-
-      // Wait for all transcriptions to complete
-      const transcriptionParts = await Promise.all(transcriptionPromises);
-
-      // Combine transcriptions
-      const transcription = transcriptionParts.join(" ");
+      const transcription = await transcribe(file);
+      if (!transcription) throw new Error("Failed to transcribe audio");
       console.log(transcription);
 
       setLoadingStage("summarizing");
-      const summaryText = await summarizeTranscriptionClaude(transcription);
+      const summaryText = await summarize(transcription);
+      if (!summaryText) throw new Error("Failed to summarize audio");
+      console.log(summaryText);
 
       const parsedSummary: NotebookType = JSON.parse(summaryText);
       setNotebook({
@@ -63,7 +48,8 @@ function App() {
     try {
       setLoading(true);
       setLoadingStage("summarizing");
-      const summaryText = await summarizeTranscriptionClaude(content);
+      const summaryText = await summarize(content);
+      if (!summaryText) throw new Error("Failed to summarize text content");
 
       const parsedSummary: NotebookType = JSON.parse(summaryText);
       setNotebook({
